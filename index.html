@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NeoBank Secure Banking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-logo">∞</div>
+        <div>
+          <h1>NeoBank Net Banking</h1>
+          <p>Safe. Smart. Always On.</p>
+        </div>
+      </div>
+      <button id="logoutBtn" class="btn ghost" hidden>Logout</button>
+    </header>
+
+    <main>
+      <section id="loginView" class="view active">
+        <div class="hero">
+          <div>
+            <p class="tag">Digital Banking</p>
+            <h2>Bank securely with MPIN and OTP fallback</h2>
+            <p>
+              Choose account type, login quickly, and manage everything from
+              transfers to cards, investments, and bill payments.
+            </p>
+          </div>
+        </div>
+
+        <div class="card login-card">
+          <h3>Login</h3>
+          <p class="muted">Select account type and continue</p>
+
+          <div class="role-toggle">
+            <button class="role-btn active" data-role="user">User</button>
+            <button class="role-btn" data-role="admin">Admin</button>
+          </div>
+
+          <label>Email</label>
+          <input id="email" type="email" placeholder="name@email.com" />
+
+          <label>MPIN (optional for OTP login)</label>
+          <input id="mpin" type="password" maxlength="6" placeholder="6-digit MPIN (or use OTP)" />
+
+          <div id="forgotWrap" class="forgot-wrap">
+            <button id="forgotBtn" class="link-btn">Forgot MPIN? Send OTP</button>
+          </div>
+
+          <div id="otpBox" class="otp-box hidden">
+            <p class="muted">OTP sent to your email. Enter it below to continue.</p>
+            <label>Enter OTP</label>
+            <input id="otp" type="text" maxlength="6" placeholder="6-digit OTP" />
+          </div>
+
+          <button id="loginBtn" class="btn primary">Login to Banking</button>
+          <p class="muted tiny">
+            Demo user: <strong>user@bank.com / 123456</strong> · Demo admin:
+            <strong>admin@bank.com / 999999</strong>
+          </p>
+        </div>
+      </section>
+
+      <section id="userView" class="view">
+        <div class="dashboard-head">
+          <h2>Welcome back, <span id="userName">Customer</span></h2>
+          <p>Here are your banking essentials and quick actions.</p>
+        </div>
+
+        <div class="grid options">
+          <article class="card option">Accounts</article>
+          <article class="card option">View Balance</article>
+          <article class="card option">Fund Transfer</article>
+          <article class="card option">UPI / QR Pay</article>
+          <article class="card option">Cards</article>
+          <article class="card option">Loans</article>
+          <article class="card option">Deposits</article>
+          <article class="card option">Investments</article>
+          <article class="card option">Insurance</article>
+          <article class="card option">Bill Payments</article>
+          <article class="card option">Recharge</article>
+          <article class="card option">Service Requests</article>
+        </div>
+
+        <div class="grid split">
+          <article class="card">
+            <h3>Account Snapshot</h3>
+            <ul class="list">
+              <li><span>Savings A/C</span><strong>₹ 2,45,900.50</strong></li>
+              <li><span>Current A/C</span><strong>₹ 8,70,110.00</strong></li>
+              <li><span>Credit Card Due</span><strong>₹ 12,480.00</strong></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h3>Recent Transactions</h3>
+            <ul class="list">
+              <li><span>UPI to GroceryHub</span><strong>- ₹ 1,240</strong></li>
+              <li><span>Salary Credit</span><strong>+ ₹ 96,000</strong></li>
+              <li><span>EMI Auto Debit</span><strong>- ₹ 19,840</strong></li>
+              <li><span>Interest Payout</span><strong>+ ₹ 2,330</strong></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="adminView" class="view">
+        <div class="dashboard-head">
+          <h2>Admin Security Dashboard</h2>
+          <p>Cyberattack trends and fraud risk monitoring.</p>
+        </div>
+
+        <div class="grid split">
+          <article class="card">
+            <h3>Cyberattacks by Type (Last 30 days)</h3>
+            <canvas id="attackChart" width="560" height="260" aria-label="Cyberattack graph"></canvas>
+          </article>
+
+          <article class="card">
+            <h3>Fraud Alert Queue</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Txn ID</th>
+                  <th>Account</th>
+                  <th>Risk</th>
+                  <th>Reason</th>
+                </tr>
+              </thead>
+              <tbody id="fraudBody"></tbody>
+            </table>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
