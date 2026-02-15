@@ -1,3 +1,4 @@
+// Replace your server.js with this improved version
 require("dotenv").config();
 
 const express = require("express");
@@ -13,7 +14,7 @@ app.use(express.static(path.join(__dirname)));
 const otpStore = new Map();
 
 const smtpUser = process.env.SMTP_USER || "neobank399@gmail.com";
-const smtpPass = process.env.SMTP_PASS;
+const smtpPass = process.env.SMTP_PASS || "";
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -21,6 +22,15 @@ const transporter = nodemailer.createTransport({
     user: smtpUser,
     pass: smtpPass,
   },
+});
+
+// verify transporter at startup so SMTP issues appear in console immediately
+transporter.verify((err, success) => {
+  if (err) {
+    console.error("SMTP transporter verify failed. Check SMTP credentials and network.", err);
+  } else {
+    console.log("SMTP transporter ready:", success);
+  }
 });
 
 function validEmail(email) {
@@ -37,7 +47,7 @@ app.post("/api/send-otp", async (req, res) => {
   if (!smtpPass) {
     return res.status(500).json({
       error:
-        "SMTP is not configured. Set SMTP_PASS (Gmail app password) for neobank399@gmail.com.",
+        "SMTP is not configured. Set SMTP_PASS (Gmail app password) in your .env file.",
     });
   }
 
@@ -56,7 +66,9 @@ app.post("/api/send-otp", async (req, res) => {
 
     return res.json({ success: true });
   } catch (error) {
-    return res.status(500).json({ error: "Failed to send OTP email." });
+    console.error("Failed to send OTP email:", error);
+    // include server-side error message to help debug (safe in dev; remove in prod)
+    return res.status(500).json({ error: "Failed to send OTP email.", details: error.message });
   }
 });
 

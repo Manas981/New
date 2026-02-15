@@ -1,3 +1,4 @@
+// Replace the whole script.js with this
 const loginView = document.getElementById("loginView");
 const userView = document.getElementById("userView");
 const adminView = document.getElementById("adminView");
@@ -10,24 +11,9 @@ const toast = document.getElementById("toast");
 
 const roleButtons = document.querySelectorAll(".role-btn");
 
-const attackData = [
-  { type: "Phishing", count: 32, color: "#ed1c3c" },
-  { type: "Malware", count: 19, color: "#f97316" },
-  { type: "DDoS", count: 11, color: "#3b82f6" },
-  { type: "Credential Stuffing", count: 27, color: "#0a2f6a" },
-  { type: "Insider Threat", count: 8, color: "#7c3aed" },
-];
-
-const fraudRows = [
-  ["TXN-88219", "XXXX3391", "High", "Device mismatch + geo anomaly"],
-  ["TXN-88233", "XXXX0177", "Medium", "Rapid transfer burst"],
-  ["TXN-88247", "XXXX7290", "High", "Known mule account link"],
-  ["TXN-88261", "XXXX1105", "Medium", "Night-time high-value attempt"],
-];
-
 let selectedRole = "user";
-let generatedOtp = "";
 let otpVerified = false;
+let otpRequestedFor = null;
 
 const demoCreds = {
   user: { email: "user@bank.com", mpin: "123456" },
@@ -39,28 +25,50 @@ roleButtons.forEach((btn) => {
     roleButtons.forEach((b) => b.classList.remove("active"));
     btn.classList.add("active");
     selectedRole = btn.dataset.role;
-
     const isUser = selectedRole === "user";
     forgotWrap.style.display = isUser ? "block" : "none";
     otpBox.classList.add("hidden");
     otpVerified = false;
+    otpRequestedFor = null;
   });
 });
 
-forgotBtn.addEventListener("click", () => {
+/* --- NEW: call server to send OTP --- */
+forgotBtn.addEventListener("click", async () => {
   const email = document.getElementById("email").value.trim();
   if (!email) {
     showToast("Please enter your email first.");
     return;
   }
 
-  generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
-  otpBox.classList.remove("hidden");
-  otpVerified = false;
-  showToast(`OTP sent to ${email}. Demo OTP: ${generatedOtp}`);
+  try {
+    showToast("Requesting OTP…");
+    const resp = await fetch("/api/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      // server returned an error message (useful for debugging)
+      showToast(data.error || "Failed to request OTP.");
+      console.error("OTP request failed:", data);
+      return;
+    }
+
+    // success
+    otpBox.classList.remove("hidden");
+    otpRequestedFor = email.toLowerCase();
+    otpVerified = false;
+    showToast(`OTP sent to ${email}. Check your inbox (and spam).`);
+  } catch (err) {
+    console.error("Network or server error requesting OTP:", err);
+    showToast("Network error: could not reach server.");
+  }
 });
 
-loginBtn.addEventListener("click", () => {
+loginBtn.addEventListener("click", async () => {
   const email = document.getElementById("email").value.trim().toLowerCase();
   const mpin = document.getElementById("mpin").value.trim();
   const otp = document.getElementById("otp").value.trim();
@@ -80,15 +88,26 @@ loginBtn.addEventListener("click", () => {
   const validMpin = mpin === creds.mpin;
 
   if (!validMpin && selectedRole === "user") {
-    if (!generatedOtp) {
-      showToast("MPIN incorrect. Use Forgot MPIN to receive OTP.");
+    if (!otpRequestedFor || otpRequestedFor !== email) {
+      showToast("MPIN incorrect. Use Forgot MPIN to request OTP for this email.");
       return;
     }
 
-    if (otp === generatedOtp) {
-      otpVerified = true;
-    } else {
-      showToast("Invalid OTP. Please check and try again.");
+    try {
+      const resp = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) {
+        showToast(data.error || "OTP verification failed.");
+        return;
+      }
+      if (data.verified) otpVerified = true;
+    } catch (err) {
+      console.error("OTP verify error:", err);
+      showToast("Network error verifying OTP.");
       return;
     }
   }
@@ -127,9 +146,25 @@ logoutBtn.addEventListener("click", () => {
   document.getElementById("mpin").value = "";
   document.getElementById("otp").value = "";
   otpBox.classList.add("hidden");
-  generatedOtp = "";
+  otpRequestedFor = null;
   otpVerified = false;
 });
+
+/* --- keep the rest of the UI helpers the same --- */
+const attackData = [
+  { type: "Phishing", count: 32, color: "#ed1c3c" },
+  { type: "Malware", count: 19, color: "#f97316" },
+  { type: "DDoS", count: 11, color: "#3b82f6" },
+  { type: "Credential Stuffing", count: 27, color: "#0a2f6a" },
+  { type: "Insider Threat", count: 8, color: "#7c3aed" },
+];
+
+const fraudRows = [
+  ["TXN-88219", "XXXX3391", "High", "Device mismatch + geo anomaly"],
+  ["TXN-88233", "XXXX0177", "Medium", "Rapid transfer burst"],
+  ["TXN-88247", "XXXX7290", "High", "Known mule account link"],
+  ["TXN-88261", "XXXX1105", "Medium", "Night-time high-value attempt"],
+];
 
 function renderFraudTable() {
   const body = document.getElementById("fraudBody");
