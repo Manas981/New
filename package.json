@@ -11,4 +11,20 @@
     "express": "^4.21.2",
     "nodemailer": "^6.9.16"
   }
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "nodemailer": "^8.0.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Manas981/New.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Manas981/New/issues"
+  },
+  "homepage": "https://github.com/Manas981/New#readme"
 }
