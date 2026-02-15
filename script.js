@@ -7,7 +7,6 @@ const forgotBtn = document.getElementById("forgotBtn");
 const forgotWrap = document.getElementById("forgotWrap");
 const otpBox = document.getElementById("otpBox");
 const toast = document.getElementById("toast");
-const otpInput = document.getElementById("otp");
 
 const roleButtons = document.querySelectorAll(".role-btn");
 
@@ -27,7 +26,7 @@ const fraudRows = [
 ];
 
 let selectedRole = "user";
-let otpRequested = false;
+let generatedOtp = "";
 let otpVerified = false;
 
 const demoCreds = {
@@ -44,50 +43,27 @@ roleButtons.forEach((btn) => {
     const isUser = selectedRole === "user";
     forgotWrap.style.display = isUser ? "block" : "none";
     otpBox.classList.add("hidden");
-    otpRequested = false;
     otpVerified = false;
-    otpInput.value = "";
   });
 });
 
-forgotBtn.addEventListener("click", async () => {
-  const email = document.getElementById("email").value.trim().toLowerCase();
+forgotBtn.addEventListener("click", () => {
+  const email = document.getElementById("email").value.trim();
   if (!email) {
     showToast("Please enter your email first.");
     return;
   }
 
-  forgotBtn.disabled = true;
-  forgotBtn.textContent = "Sending OTP...";
-
-  try {
-    const response = await fetch("/api/send-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-
-    const payload = await response.json();
-    if (!response.ok) {
-      throw new Error(payload.error || "Unable to send OTP");
-    }
-
-    otpBox.classList.remove("hidden");
-    otpRequested = true;
-    otpVerified = false;
-    showToast("OTP sent successfully to your email.");
-  } catch (error) {
-    showToast(error.message || "OTP send failed.");
-  } finally {
-    forgotBtn.disabled = false;
-    forgotBtn.textContent = "Forgot MPIN? Send OTP";
-  }
+  generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+  otpBox.classList.remove("hidden");
+  otpVerified = false;
+  showToast(`OTP sent to ${email}. Demo OTP: ${generatedOtp}`);
 });
 
-loginBtn.addEventListener("click", async () => {
+loginBtn.addEventListener("click", () => {
   const email = document.getElementById("email").value.trim().toLowerCase();
   const mpin = document.getElementById("mpin").value.trim();
-  const otp = otpInput.value.trim();
+  const otp = document.getElementById("otp").value.trim();
 
   if (!email || !mpin) {
     showToast("Enter both email and MPIN.");
@@ -104,26 +80,15 @@ loginBtn.addEventListener("click", async () => {
   const validMpin = mpin === creds.mpin;
 
   if (!validMpin && selectedRole === "user") {
-    if (!otpRequested) {
+    if (!generatedOtp) {
       showToast("MPIN incorrect. Use Forgot MPIN to receive OTP.");
       return;
     }
 
-    try {
-      const response = await fetch("/api/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp }),
-      });
-
-      const payload = await response.json();
-      if (!response.ok || !payload.verified) {
-        throw new Error(payload.error || "OTP verification failed.");
-      }
-
+    if (otp === generatedOtp) {
       otpVerified = true;
-    } catch (error) {
-      showToast(error.message || "Invalid OTP.");
+    } else {
+      showToast("Invalid OTP. Please check and try again.");
       return;
     }
   }
@@ -160,9 +125,9 @@ logoutBtn.addEventListener("click", () => {
 
   document.getElementById("email").value = "";
   document.getElementById("mpin").value = "";
-  otpInput.value = "";
+  document.getElementById("otp").value = "";
   otpBox.classList.add("hidden");
-  otpRequested = false;
+  generatedOtp = "";
   otpVerified = false;
 });
 
