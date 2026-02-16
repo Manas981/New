@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NeoBank Secure Banking</title>
+    <title>Kotak Inspired Secure Banking</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,7 +17,7 @@
       <div class="brand">
         <div class="brand-logo">∞</div>
         <div>
-          <h1>NeoBank Net Banking</h1>
+          <h1>Kotak-Inspired Net Banking</h1>
           <p>Safe. Smart. Always On.</p>
         </div>
       </div>
@@ -49,22 +49,22 @@
           <label>Email</label>
           <input id="email" type="email" placeholder="name@email.com" />
 
-          <label>MPIN (optional for OTP login)</label>
-          <input id="mpin" type="password" maxlength="6" placeholder="6-digit MPIN (or use OTP)" />
+          <label>MPIN</label>
+          <input id="mpin" type="password" maxlength="6" placeholder="6-digit MPIN" />
 
           <div id="forgotWrap" class="forgot-wrap">
-            <button id="forgotBtn" class="link-btn">Forgot MPIN? Send OTP</button>
+            <button id="forgotBtn" class="link-btn">Forgot MPIN?</button>
           </div>
 
           <div id="otpBox" class="otp-box hidden">
-            <p class="muted">OTP sent to your email. Enter it below to continue.</p>
+            <p class="muted">An OTP has been sent to your email.</p>
             <label>Enter OTP</label>
             <input id="otp" type="text" maxlength="6" placeholder="6-digit OTP" />
           </div>
 
           <button id="loginBtn" class="btn primary">Login to Banking</button>
           <p class="muted tiny">
-            User login: <strong>Any email + MPIN 123456</strong> or OTP · Demo admin:
+            Demo user: <strong>user@bank.com / 123456</strong> · Demo admin:
             <strong>admin@bank.com / 999999</strong>
           </p>
         </div>
@@ -94,40 +94,20 @@
         <div class="grid split">
           <article class="card">
             <h3>Account Snapshot</h3>
-            <ul class="list" id="accountList"></ul>
+            <ul class="list">
+              <li><span>Savings A/C</span><strong>₹ 2,45,900.50</strong></li>
+              <li><span>Current A/C</span><strong>₹ 8,70,110.00</strong></li>
+              <li><span>Credit Card Due</span><strong>₹ 12,480.00</strong></li>
+            </ul>
           </article>
-
-          <article class="card">
-            <h3>Payments: Transfer or Request Funds</h3>
-            <form id="paymentForm" class="payment-form">
-              <label>Action</label>
-              <select id="paymentType">
-                <option value="transfer">Transfer Funds</option>
-                <option value="request">Request Funds</option>
-              </select>
-
-              <label>Counterparty Account</label>
-              <input id="counterparty" type="text" placeholder="e.g., AC99887766" required />
-
-              <label>Amount (₹)</label>
-              <input id="paymentAmount" type="number" min="1" step="0.01" placeholder="1000" required />
-
-              <label>Note</label>
-              <input id="paymentNote" type="text" placeholder="Rent / Invoice / Gift" />
-
-              <button class="btn primary" type="submit">Submit Payment</button>
-            </form>
-          </article>
-        </div>
-
-        <div class="grid split">
           <article class="card">
             <h3>Recent Transactions</h3>
-            <ul class="list" id="txnList"></ul>
-          </article>
-          <article class="card">
-            <h3>Incoming Requests</h3>
-            <ul class="list" id="requestList"></ul>
+            <ul class="list">
+              <li><span>UPI to GroceryHub</span><strong>- ₹ 1,240</strong></li>
+              <li><span>Salary Credit</span><strong>+ ₹ 96,000</strong></li>
+              <li><span>EMI Auto Debit</span><strong>- ₹ 19,840</strong></li>
+              <li><span>Interest Payout</span><strong>+ ₹ 2,330</strong></li>
+            </ul>
           </article>
         </div>
       </section>

@@ -111,14 +111,11 @@ label {
   color: #4a5568;
 }
 
-input,
-select {
+input {
   width: 100%;
   border: 1px solid #d8deea;
   border-radius: 10px;
   padding: 11px;
-  font: inherit;
-  background: #fff;
 }
 
 .role-toggle {
@@ -227,28 +224,8 @@ select {
 .list li {
   display: flex;
   justify-content: space-between;
-  gap: 8px;
   padding: 10px 0;
   border-bottom: 1px solid #edf0f6;
-}
-
-.list li:last-child {
-  border-bottom: 0;
-}
-
-.payment-form {
-  display: grid;
-  gap: 6px;
-}
-
-.amount-out {
-  color: #b91c1c;
-  font-weight: 700;
-}
-
-.amount-in {
-  color: #047857;
-  font-weight: 700;
 }
 
 table {
